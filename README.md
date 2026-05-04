@@ -20,20 +20,21 @@ A real-time sign language detection system using **MediaPipe** for hand landmark
 
 
 ##  Project Structure
-
-
+```
 sign_language_detector/
-├── collected_images/       # Training images (one folder per sign)
-├── models/
-│   ├── hand_landmarker.task   # MediaPipe hand model
-│   └── sign_model.pkl         # Trained classifier (generated after training)
-├── scripts/
-│   ├── collect_images.py      # Capture training images from webcam
-│   ├── train_model.py         # Extract landmarks & train the model
-│   └── detect_realtime.py     # Live webcam detection
-├── .gitignore
-├── requirements.txt
-└── README.md
+─ collected_images/       # Training images (one folder per sign)
+─ models/
+    ─ hand_landmarker.task   # MediaPipe hand model
+    ─ sign_model.pkl         # Trained classifier (generated after training)
+─ scripts/
+   ── collect_images.py      # Capture training images from webcam
+   ── train_model.py         # Extract landmarks & train the model
+   ── detect_realtime.py     # Live webcam detection
+─ .gitignore
+─ requirements.txt
+─ README.md
+```
+ 
 
 
 
