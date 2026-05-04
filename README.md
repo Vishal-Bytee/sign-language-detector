@@ -43,7 +43,7 @@ sign_language_detector/
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/Vishal-Byṭee/sign-language-detector.git
+git clone https://github.com/Vishal-Bytee/sign-language-detector.git
 cd sign-language-detector
 ```
 
