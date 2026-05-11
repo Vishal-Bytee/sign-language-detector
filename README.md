@@ -1,16 +1,16 @@
-# Sign Language Detector
+# Sign Language Detector 
 
 A real-time sign language detection system using **MediaPipe** for hand landmark detection and **Random Forest** for gesture classification. Built with Python and OpenCV.
 
-
+---
 
 ## Demo
 
 > Point your hand at the webcam and the model will detect your sign in real time!
 
+---
 
-
-##  Supported Signs
+## Supported Signs
 
 | Sign | Sign | Sign |
 |------|------|------|
@@ -18,28 +18,28 @@ A real-time sign language detection system using **MediaPipe** for hand landmark
 | No | I Love You | Please |
 | Sorry | Eat | Drink |
 
+---
 
-##  Project Structure
+## Project Structure
+
 ```
 sign_language_detector/
-─ collected_images/       # Training images (one folder per sign)
-─ models/
-    ─ hand_landmarker.task   # MediaPipe hand model
-    ─ sign_model.pkl         # Trained classifier (generated after training)
-─ scripts/
-   ── collect_images.py      # Capture training images from webcam
-   ── train_model.py         # Extract landmarks & train the model
-   ── detect_realtime.py     # Live webcam detection
-─ .gitignore
-─ requirements.txt
-─ README.md
+├── collected_images/         # Training images (one folder per sign)
+├── models/
+│   ├── hand_landmarker.task  # MediaPipe hand model
+│   └── sign_model.pkl        # Trained classifier (generated after training)
+├── scripts/
+│   ├── collect_images.py     # Capture training images from webcam
+│   ├── train_model.py        # Extract landmarks & train the model
+│   └── detect_realtime.py    # GUI + live webcam detection + image upload
+├── .gitignore
+├── requirements.txt
+└── README.md
 ```
- 
 
+---
 
-
-
-##  Setup & Installation
+## Setup & Installation
 
 ### 1. Clone the repository
 ```bash
@@ -72,9 +72,9 @@ pip install -r requirements.txt
 ### 5. Download MediaPipe Hand Landmarker Model
 Download `hand_landmarker.task` from the [MediaPipe official site](https://developers.google.com/mediapipe/solutions/vision/hand_landmarker) and place it inside the `models/` folder.
 
+---
 
-
-##  How to Use
+## How to Use
 
 ### Step 1 — Collect Training Images
 ```bash
@@ -93,55 +93,57 @@ python scripts/train_model.py
 - Saves the model to `models/sign_model.pkl`
 - Prints accuracy after training
 
-### Step 3 — Run Real-Time Detection
+### Step 3 — Run the App
 ```bash
 python scripts/detect_realtime.py
 ```
-- Opens your webcam
-- Detects hand signs in real time
-- Shows the predicted sign + confidence on screen
-- Press **Q** to quit
+- Opens a **dark GUI window** with two options
+- ** Real-Time Webcam** — live detection with confidence chart
+- ** Upload Image** — detect sign from any saved image
+- Press **Q** to quit webcam
 
+> **Note:** App is active only between **6 PM – 10 PM**. To bypass this during development, set `DEBUG_MODE = True` inside `detect_realtime.py`.
 
+---
 
-##  How It Works
+## How It Works
 
 ```
-Webcam Frame
-     |
+Webcam Frame / Uploaded Image
+          |
 MediaPipe Hand Landmarker
-     |
+          |
 21 Hand Landmarks (x, y coordinates)
-     |
+          |
 Random Forest Classifier
-     |
-Predicted Sign + Confidence % with charts
+          |
+Predicted Sign + Confidence % with live chart
 ```
 
+---
 
-
-##  Dependencies
+## Dependencies
 
 - [OpenCV](https://opencv.org/) — Webcam capture and display
 - [MediaPipe](https://mediapipe.dev/) — Hand landmark detection
 - [scikit-learn](https://scikit-learn.org/) — Random Forest classifier
 - [NumPy](https://numpy.org/) — Data processing
+- [Matplotlib](https://matplotlib.org/) — Live confidence chart
+- [Pillow](https://python-pillow.org/) — GUI image handling
 
 Install all with:
 ```bash
 pip install -r requirements.txt
 ```
 
+---
 
-
-##  Tips to Improve Accuracy
+## Tips to Improve Accuracy
 
 - Collect **200+ images** per sign instead of 50
 - Make sure your hand is well-lit and clearly visible
 - Try different backgrounds while collecting images
 - Normalize landmarks relative to the wrist position for better generalization
 
-
-
-
+---
 
