@@ -5,6 +5,9 @@ import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 import time
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('TkAgg')  # popup window ke liye
 
 # Model Load
 with open('models/sign_model.pkl', 'rb') as f:
@@ -34,39 +37,33 @@ HAND_CONNECTIONS = [
 
 signs = model.classes_
 
-BAR_X = 10
-BAR_START_Y = 100
-BAR_HEIGHT = 18
-BAR_GAP = 28
-BAR_MAX_WIDTH = 180
+# Matplotlib chart setup
+plt.ion()
+fig, ax = plt.subplots(figsize=(5, 4))
+fig.patch.set_facecolor('#1e1e1e')
+fig.canvas.manager.set_window_title('Live Confidence Chart')
+
+bars = ax.barh(signs, [0] * len(signs), color='#555555')
+
+ax.set_xlim(0, 1)
+ax.set_facecolor('#1e1e1e')
+ax.tick_params(colors='white')
+ax.spines['bottom'].set_color('#444')
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
+ax.spines['left'].set_color('#444')
+ax.set_xlabel('Confidence', color='white')
+ax.set_title('Sign Confidence', color='white', fontsize=13)
+plt.tight_layout()
 
 
-def draw_confidence_bars(frame, proba):
-    # dark background box for bars
-    overlay = frame.copy()
-    box_h = len(signs) * BAR_GAP + 20
-    cv2.rectangle(overlay, (BAR_X - 5, BAR_START_Y - 25), (BAR_X + BAR_MAX_WIDTH + 70, BAR_START_Y + box_h), (0, 0, 0), -1)
-    cv2.addWeighted(overlay, 0.4, frame, 0.6, 0, frame)
-
-    cv2.putText(frame, 'Confidence', (BAR_X, BAR_START_Y - 8),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (200, 200, 200), 1)
-
-    for i, (sign, prob) in enumerate(zip(signs, proba)):
-        y = BAR_START_Y + i * BAR_GAP
-        bar_w = int(prob * BAR_MAX_WIDTH)
-
-        # color: green for top, grey for rest
-        color = (0, 220, 0) if prob == max(proba) else (100, 100, 100)
-
-        cv2.rectangle(frame, (BAR_X, y), (BAR_X + bar_w, y + BAR_HEIGHT), color, -1)
-        cv2.rectangle(frame, (BAR_X, y), (BAR_X + BAR_MAX_WIDTH, y + BAR_HEIGHT), (60, 60, 60), 1)
-
-        cv2.putText(frame, sign, (BAR_X + BAR_MAX_WIDTH + 5, y + 13),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.45, (255, 255, 255), 1)
-
-        pct = f'{prob * 100:.0f}%'
-        cv2.putText(frame, pct, (BAR_X + bar_w - 28, y + 13),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.38, (255, 255, 255), 1)
+def update_chart(proba):
+    top = np.argmax(proba)
+    for i, (bar, prob) in enumerate(zip(bars, proba)):
+        bar.set_width(prob)
+        bar.set_color('#00e676' if i == top else '#555555')
+    fig.canvas.draw()
+    fig.canvas.flush_events()
 
 
 # Webcam
@@ -74,6 +71,7 @@ cap = cv2.VideoCapture(0)
 print("Camera chal raha hai — Q dabao band karne ke liye!")
 
 timestamp_ms = 0
+last_chart_update = 0
 
 with HandLandmarker.create_from_options(options) as landmarker:
     while True:
@@ -116,10 +114,12 @@ with HandLandmarker.create_from_options(options) as landmarker:
             prediction = model.classes_[np.argmax(proba)]
             confidence = max(proba) * 100
 
-            # Confidence bars
-            draw_confidence_bars(frame, proba)
+            # update chart every ~300ms
+            if timestamp_ms - last_chart_update > 300:
+                update_chart(proba)
+                last_chart_update = timestamp_ms
 
-            # Main label on top
+            # label on webcam
             cv2.putText(frame, f'{prediction}  {confidence:.0f}%',
                         (20, 50),
                         cv2.FONT_HERSHEY_SIMPLEX,
@@ -132,3 +132,4 @@ with HandLandmarker.create_from_options(options) as landmarker:
 
 cap.release()
 cv2.destroyAllWindows()
+plt.close()

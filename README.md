@@ -115,7 +115,7 @@ MediaPipe Hand Landmarker
      |
 Random Forest Classifier
      |
-Predicted Sign + Confidence %
+Predicted Sign + Confidence % with charts
 ```
 
 
